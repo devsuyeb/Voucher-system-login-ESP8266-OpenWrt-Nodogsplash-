@@ -2,17 +2,17 @@
 
 This guide covers installing, configuring, and running Nodogsplash on OpenWrt with ESP8266 voucher validation.
 
-## 1. Connect to your OpenWrt router via SSH
+# 1. Connect to your OpenWrt router via SSH
 
 Use this command (replace IP if needed):
 ssh -oHostKeyAlgorithms=+ssh-rsa root@192.168.1.1
 
-2. Install Nodogsplash
+# 2. Install Nodogsplash
 Update package lists and install Nodogsplash cleanly:
 opkg update
 opkg install nodogsplash
 
-3. Configure Nodogsplash
+# 3. Configure Nodogsplash
 Edit the main config file:
  vi /etc/config/nodogsplash
 Make necessary changes to match your network.
@@ -35,23 +35,27 @@ option authidletimeout '1440'      # Authenticated idle timeout (1440 minutes = 
 option sessiontimeout '1440'       # Total session timeout (24h)
 option checkinterval '300'         # Timeout check interval in seconds (5 minutes)
 
-5. Setup splash page HTML
+# 4. Setup splash page HTML
 Edit or replace the splash page:
 vi /etc/nodogsplash/htdocs/splash.html
 Edit the HTML and replace all code with the given HTML file.
 
-5. Restart Nodogsplash
+# 5. Restart Nodogsplash
 Apply your changes by restarting the service:
 
 /etc/init.d/nodogsplash restart
 
 
-8. Flash and configure your ESP8266
+# 6. Flash and configure your ESP8266
 Upload the Arduino sketch (firmware/voucher_login.ino) to your ESP8266 device.
 
 Make sure the ESP8266 firmware matches your OpenWrt IP and Nodogsplash setup.
 
-9. Usage
+# 7. Add coupons
+visit 192.168.x.x/admin to add coupons
+find the ip from your router connected clients check which ip is got your ESP8266 Module
+
+# 9. Usage
 When a client connects, they are redirected to the splash page.
 
 User inputs voucher code which is validated by the ESP8266.
