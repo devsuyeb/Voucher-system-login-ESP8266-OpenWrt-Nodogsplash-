@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>$gatewayname Hotspot Gateway</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+<style>
+body {
+	font-family: Arial, sans-serif;
+	background-color: #f7f7f7;
+	padding: 30px;
+	text-align: center;
+    }
+
+#loginForm {
+	background: white;
+	padding: 20px;
+	display: inline-block;
+	border-radius: 10px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+button {
+	padding: 10px;
+	margin: 10px 0;
+	width: 100%;
+	font-size: 16px;
+	background-color: rgb(60, 145, 255);
+	border: none;
+	border-radius: 5px;
+}
+
+input[type="text"] {
+	padding: 10px;
+	margin: 10px 0;
+	width: 92%;
+	font-size: 16px;
+	border: 1px solid #acabab;
+	border-radius: 5px;
+}
+
+.message {
+	margin-top: 10px;
+	font-weight: bold;
+}
+
+.message.success {
+	color: green;
+}
+
+.message.error {
+	color: red;
+}
+
+p {
+	font-size: 14px;
+}
+
+</style>
+</head>
+<body>
+
+  <h2>Welcome to Suyeb WiFi</h2>
+  <p>Buy a voucher card from nearest store</p>
+  <p>Enter your voucher code to access the Internet.</p> 
+
+  <form id="loginForm" method="get" action="$authaction">
+    <input type="hidden" name="tok" value="$tok">
+    <input type="hidden" name="redir" value="$redir">
+    <input type="text" id="voucher" placeholder="Enter Voucher Code" required>
+    <button type="submit">Login</button>
+  </form>
+
+  <div id="message" class="message"></div>
+
+  <p style="color: red;">Warning change your privacy setting to:<br>(Use Device MAC)<br>for desconnect and reconnect in 24 hours </p>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const loginForm = document.getElementById("loginForm");
+      const voucherInput = document.getElementById("voucher");
+      const tokenInput = document.querySelector("input[name='tok']");
+      const redirInput = document.querySelector("input[name='redir']");
+      const messageEl = document.getElementById("message");
+
+      loginForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const voucher = voucherInput.value.trim();
+        const tok = tokenInput.value;
+        const redir = redirInput ? redirInput.value : "";
+
+        if (!tok) {
+          showMessage("Token missing from HTML. Contact admin.", "error");
+          return;
+        }
+
+        if (!voucher) {
+          showMessage("Please enter a voucher code.", "error");
+          return;
+        }
+
+        try {
+          const response = await fetch("http://192.168.1.113/validate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ voucher }),
+            mode: "cors"
+          });
+
+          const data = await response.json();
+
+          if (!response.ok || !data.valid) {
+            showMessage(data.error || "Invalid voucher.", "error");
+            return;
+          }
+
+          showMessage("Voucher accepted. Logging in...", "success");
+
+          setTimeout(() => {
+            loginForm.submit();
+          }, 1000);
+
+        } catch (err) {
+          console.error(err);
+          showMessage("Error contacting validation server.", "error");
+        }
+      });
+
+      function showMessage(msg, type) {
+        messageEl.textContent = msg;
+        messageEl.className = "message " + type;
+      }
+    });
+  </script>
+
+</body>
+</html>
