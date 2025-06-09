@@ -1,74 +1,126 @@
- # Installation Guide for ESP8266 Wi-Fi Voucher Captive Portal with Nodogsplash on OpenWrt
+# Installation Guide for ESP8266 Wi-Fi Voucher Captive Portal with Nodogsplash on OpenWrt
 
-This guide covers installing, configuring, and running Nodogsplash on OpenWrt with ESP8266 voucher validation.
+This guide explains how to set up Nodogsplash on OpenWrt and connect it to an ESP8266 (like Wemos D1 Mini Pro) for voucher-based captive portal authentication.
 
-# 1. Connect to your OpenWrt router via SSH
+---
 
-Use this command (replace IP if needed):
+## 1. Connect to Your OpenWrt Router via SSH
+
+Use this command (replace the IP address if needed):
+
+```bash
 ssh -oHostKeyAlgorithms=+ssh-rsa root@192.168.1.1
+```
 
-# 2. Install Nodogsplash
-Update package lists and install Nodogsplash cleanly:
+---
+
+## 2. Install Nodogsplash
+
+Cleanly reinstall Nodogsplash to ensure a fresh setup:
+
+```bash
 opkg update
+opkg remove nodogsplash  # optional, if already installed
 opkg install nodogsplash
+```
 
-# 3. Configure Nodogsplash
-Edit the main config file:
- vi /etc/config/nodogsplash
-Make necessary changes to match your network.
+---
 
-#Config for allow all local ip without without authentication. This for your ESP8266 validation server can access before coupon enter
+## 3. Configure Nodogsplash
 
-add this bottom of the config
+Open the main configuration file:
 
+```bash
+vi /etc/config/nodogsplash
+```
+
+### Allow Local IPs (like ESP8266) Without Authentication
+
+Add the following block at the bottom of the file to whitelist local devices (e.g., ESP8266):
+
+```text
 config authenticated_users 'lan_access'
-option target 'ACCEPT'
-option dest_ip '192.168.1.0/24'
+    option target 'ACCEPT'
+    option dest_ip '192.168.1.0/24'
+```
 
-Set timeouts to control session duration and idle times:
+### Set Session and Timeout Settings
 
-find and edit
+Find and adjust these settings as needed:
 
+```text
 # Client timeouts in minutes
-option preauthidletimeout '30'     # Idle timeout before login (30 minutes)
-option authidletimeout '1440'      # Authenticated idle timeout (1440 minutes = 24h)
-option sessiontimeout '1440'       # Total session timeout (24h)
-option checkinterval '300'         # Timeout check interval in seconds (5 minutes)
+option preauthidletimeout '30'     # Time before login timeout (30 min)
+option authidletimeout '1440'      # Idle time after auth (24 hrs)
+option sessiontimeout '1440'       # Max session length (24 hrs)
+option checkinterval '300'         # Check interval in seconds (5 min)
+```
 
-# 4. Setup splash page HTML
-Edit or replace the splash page:
+---
+
+## 4. Edit Splash Page HTML
+
+Edit or replace the splash page file:
+
+```bash
 vi /etc/nodogsplash/htdocs/splash.html
-Edit the HTML and replace all code with the given HTML file.
+```
 
-# 5. Restart Nodogsplash
-Apply your changes by restarting the service:
+Replace the content with the custom HTML file provided in this repository.
 
+---
+
+## 5. Restart Nodogsplash
+
+Apply changes by restarting the service:
+
+```bash
 /etc/init.d/nodogsplash restart
+```
 
+---
 
-# 6. Flash and configure your ESP8266
-Upload the Arduino sketch (firmware/voucher_login.ino) to your ESP8266 device.
+## 6. Flash and Configure ESP8266
 
-Make sure the ESP8266 firmware matches your OpenWrt IP and Nodogsplash setup.
+- Open the Arduino sketch file: `firmware/voucher_login.ino`.
+- Upload it to your ESP8266 device using the Arduino IDE.
+- Ensure the ESP8266 IP and port match your OpenWrt router’s network settings.
 
-# 7. Add coupons
-visit 192.168.x.x/admin to add coupons
-find the ip from your router connected clients check which ip is got your ESP8266 Module
+---
 
-# 9. Usage
-When a client connects, they are redirected to the splash page.
+## 7. Add Vouchers
 
-User inputs voucher code which is validated by the ESP8266.
+1. Find the ESP8266 IP from your router's "Connected Clients" list.
+2. Visit the ESP8266 admin panel in your browser:
 
-Upon successful validation, internet access is granted.
+```
+http://192.168.x.x/admin
+```
 
-Troubleshooting
-Ensure the splash page contains the correct token and form action URL.
+3. Use the interface to add voucher codes.
 
-Confirm your ESP8266 and router IP addresses match those in configuration files.
+---
 
-Check the ESP8266 serial monitor for voucher validation logs.
+## 8. Usage
 
-Restart Nodogsplash after every configuration change.
+- When a new client connects, they are redirected to the splash page.
+- The user enters a voucher code.
+- The ESP8266 validates the voucher and removes it from memory.
+- If valid, Nodogsplash grants internet access.
 
-If you find this useful, please ⭐ star the repository!
+---
+
+## 9. Troubleshooting
+
+- Make sure the token (`$tok`) is correctly included in the HTML form.
+- Verify that the ESP8266 IP is accessible from the router.
+- Check the ESP8266 serial monitor for validation logs.
+- Always restart Nodogsplash after changing configs or HTML.
+
+---
+
+## ⭐ If You Found This Useful
+
+Please consider starring the [GitHub repository](https://github.com/devsuyeb/Wi-Fi_Voucher_system_login_OpenWrt_Nodogsplash_ESP8266) and sharing the project!
+
+---
