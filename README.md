@@ -1,6 +1,6 @@
 # ESP8266 Voucher Login Captive Portal
 
-An open-source project to manage internet access using ESP8266 + OpenWrt + Nodogsplash.
+An open-source project to manage Wi-Fi internet access using OpenWrt + Nodogsplash + ESP8266.
 
 ## 📦 Features
 - Voucher-based captive portal
@@ -12,10 +12,11 @@ An open-source project to manage internet access using ESP8266 + OpenWrt + Nodog
 ## 📁 File Structure
 - `firmware/` - ESP8266 Arduino code
 - `html/` - Custom splash page
-- `nodogsplash/` - Nodogsplash config sample
+- `docs/` - Nodogsplash config sample + guide
 
 ## 🚀 How to Use
-5. Follow full guide provided in docs/installation_guide.md
+5. Follow full guide provided in
+-`docs/installation_guide.md`
 
 ## 🛠️ Requirements
 - ESP8266 (D1 Mini, NodeMCU, etc.)
