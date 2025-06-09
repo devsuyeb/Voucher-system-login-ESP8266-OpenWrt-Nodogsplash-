@@ -4,7 +4,7 @@
 #include <ArduinoJson.h>
 
 const char* ssid = "YOUR SSID";
-const char* password = "YOUR PASS";
+const char* password = ""; //add password your router has password protected 
 
 ESP8266WebServer server(80);
 
